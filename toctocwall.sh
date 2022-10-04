@@ -6,7 +6,7 @@ puertos(){
  for linea in $(netstat -l4ntu|awk '{print $1,$4}'|grep 127.0.0.1|tr " " _); do
  #permito todos los puertos locales by default
  protocolo=$(echo $linea|cut -d_ -f1) 
- puerto=$(echo $linea|cut -d_ -f2)
+ puerto=$(echo $linea|cut -d: -f2)
  iptables &>/dev/null -C INPUT -i lo -p $protocolo --dport $puerto -j ACCEPT || iptables &>/dev/null -I INPUT  1 -i lo -p $protocolo --dport $puerto -j ACCEPT 
  done
  ip=$(curl -s ifconfig.me)
@@ -14,7 +14,7 @@ puertos(){
  for linea in $(netstat -l4ntu|awk '{print $1,$4}'|grep -e 0.0.0.0 -e $ip|tr " " _); do
  #permito todos los puertos locales by default
  protocolo=$(echo $linea|cut -d_ -f1) 
- puerto=$(echo $linea|cut -d_ -f2)
+ puerto=$(echo $linea|cut -d: -f2)
  puertos_toctoc=$(grep -P -v "^#" $ruta/toctoc.cfg|cut -d: -f2|tr "," " "|xargs echo)
  long_puertos=${#puertos_toctoc} #Veo longitud de cadena
  post_puertos=$(echo ${puertos_toctoc/$(echo $linea|cut -d: -f2)/})
