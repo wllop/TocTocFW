@@ -1,6 +1,25 @@
 #!/bin/bash
 fin=0
 ruta=$(dirname $(realpath $0))
+puertos(){
+ echo "Habilitando puertos locales (localhost)"
+ for linea in $(netstat -l4ntu|awk '{print $1,$4}'|grep 127.0.0.1|tr " " _); do
+ #permito todos los puertos locales by default
+ iptables &>/dev/null -C INPUT -p $(echo $linea|cut -d_ -f1) -s 127.0.0.1 --dport $(echo $linea|cut -d: -f2) -j ACCEPT || iptables -I INPUT 1 -p $(ech$
+ done
+ ip=$(curl -s ifconfig.me)
+ echo "Habilitando puertos acceso remoto (0.0.0.0 y $ip)"
+ for linea in $(netstat -l4ntu|awk '{print $1,$4}'|grep -e 0.0.0.0 -e $ip|tr " " _); do
+ #permito todos los puertos locales by default
+ puertos_toctoc=$(grep -P -v "^#" $ruta/toctoc.cfg|cut -d: -f2|tr "," " "|xargs echo)
+ long_puertos=${#puertos_toctoc} #Veo longitud de cadena
+ post_puertos=$(echo ${puertos_toctoc/$(echo $linea|cut -d: -f2)/})
+ long_post_puertos=${#post_puertos}
+ if [ "$long_puertos" -eq "$long_post_puertos" ]; then #Sin long es = es que el puerto NO está controlado por toctoc
+   iptables &>/dev/null -C INPUT 1 -p $(echo $linea|cut -d_ -f1) -s 0.0.0.0 --dport $(echo $linea|cut -d: -f2) -j ACCEPT || iptables -I INPUT 1$
+ fi
+ done
+}
 reset(){
 if [ -e $ruta/.toctoc.cfg.old ]; then
    for passcode in $(grep -P -v "^#" $ruta/.toctoc.cfg.old |cut -d= -f2-) ; do
@@ -54,7 +73,13 @@ if ! [ -e  $ruta/toctoc.cfg ];then
   exit
 fi
 IFS_old=$IFS
-reset
+puertos
+if diff -rq $ruta/toctoc.cfg $ruta/.toctoc.cfg.old &>/dev/null; then
+ reset
+ exit
+else
+ reset
+fi
 cp -f $ruta/toctoc.cfg $ruta/.toctoc.cfg.old &>/dev/null
 iptables -P INPUT DROP
 #Recorremos todos los posibles passcodes del fichero de configuracion
@@ -97,3 +122,4 @@ for passcode in $(grep -P -v "^#" $ruta/toctoc.cfg|cut -d= -f2-) ; do
    fi
    IFS=$IFS_old
 done
+º1
