@@ -5,7 +5,7 @@ puertos(){
  echo "Habilitando puertos locales (localhost)"
  for linea in $(netstat -l4ntu|awk '{print $1,$4}'|grep 127.0.0.1|tr " " _); do
  #permito todos los puertos locales by default
- iptables &>/dev/null -C INPUT -p $(echo $linea|cut -d_ -f1) -s 127.0.0.1 --dport $(echo $linea|cut -d: -f2) -j ACCEPT || iptables -I INPUT 1 -p $(ech$
+ iptables &>/dev/null -C INPUT -p $(echo $linea|cut -d_ -f1) -s 127.0.0.1 --dport $(echo $linea|cut -d: -f2) -j ACCEPT || iptables &>/dev/null -I INPUT  1 -p $(echo $linea|cut -d_ -f1) -s 127.0.0.1 --dport $(echo $linea|cut -d: -f2) -j ACCEPT 
  done
  ip=$(curl -s ifconfig.me)
  echo "Habilitando puertos acceso remoto (0.0.0.0 y $ip)"
@@ -16,7 +16,7 @@ puertos(){
  post_puertos=$(echo ${puertos_toctoc/$(echo $linea|cut -d: -f2)/})
  long_post_puertos=${#post_puertos}
  if [ "$long_puertos" -eq "$long_post_puertos" ]; then #Sin long es = es que el puerto NO está controlado por toctoc
-   iptables &>/dev/null -C INPUT 1 -p $(echo $linea|cut -d_ -f1) -s 0.0.0.0 --dport $(echo $linea|cut -d: -f2) -j ACCEPT || iptables -I INPUT 1$
+   iptables &>/dev/null -C INPUT 1 -p $(echo $linea|cut -d_ -f1) -s 0.0.0.0 --dport $(echo $linea|cut -d: -f2) -j ACCEPT || iptables &>/dev/null -I INPUT  1 -p $(echo $linea|cut -d_ -f1) -s 0.0.0.0 --dport $(echo $linea|cut -d: -f2) -j ACCEPT 
  fi
  done
 }
@@ -122,4 +122,3 @@ for passcode in $(grep -P -v "^#" $ruta/toctoc.cfg|cut -d= -f2-) ; do
    fi
    IFS=$IFS_old
 done
-º1
