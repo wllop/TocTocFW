@@ -7,7 +7,7 @@ puertos(){
  #permito todos los puertos locales by default
  protocolo=$(echo $linea|cut -d_ -f1) 
  puerto=$(echo $linea|cut -d: -f2)
- iptables &>/dev/null -C INPUT -i lo -p $protocolo --dport $puerto -j ACCEPT || iptables &>/dev/null -I INPUT  1 -i lo -p $protocolo --dport $puerto -j ACCEPT 
+ iptables &>/dev/null -C INPUT -i lo -s 127.0.0.1/32 -p $protocolo --dport $puerto -j ACCEPT || iptables &>/dev/null -I INPUT  1 -i lo -s 127.0.0.1/32 -p $protocolo --dport $puerto -j ACCEPT 
  done
  ip=$(curl -s ifconfig.me)
  echo "Habilitando puertos acceso remoto (0.0.0.0 y $ip)"
