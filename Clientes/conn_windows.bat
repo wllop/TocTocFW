@@ -34,7 +34,7 @@ if %errorlevel% EQU 9009 (
   rem Curl está en el sistema
   for /F "delims=, usebackq" %%p in ('%pass%') do (
    for %%a in (%%p) do (
-      curl.exe --connect-timeout 0,300 -s http://%servidor%:%%a
+      curl.exe --connect-timeout 0.300 -s http://%servidor%:%%a
    )
   )
 )
