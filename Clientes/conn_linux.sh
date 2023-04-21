@@ -25,7 +25,7 @@ fi
 #Regularizamos espacios en las combinaciones y convertimos a array:
 puertos=($(echo $pass|tr -d " "|tr , " "))
 for puerto in ${puertos[*]}; do
-  curl --connect-timeout 0,300 -s http://$servidor:$puerto
+  curl --connect-timeout 0.300 -s http://$servidor:$puerto ||  curl --connect-timeout 0,300 -s http://$servidor:$puerto 
   echo http://$servidor:$puerto
 done
 echo "Combinación realizada con éxito."
